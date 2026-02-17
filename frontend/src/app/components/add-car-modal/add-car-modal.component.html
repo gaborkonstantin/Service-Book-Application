@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>
+    <mat-icon style="vertical-align:middle;margin-right:8px;color:var(--primary)">directions_car</mat-icon>
+    Új autó hozzáadása
+</h2>
+
+<mat-dialog-content style="padding-top:20px">
+    <form [formGroup]="carForm">
+        <div class="form-grid">
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Márka *</mat-label>
+                <input matInput formControlName="brand" placeholder="Honda">
+                <mat-error>Márka kötelező</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Modell *</mat-label>
+                <input matInput formControlName="model" placeholder="Civic">
+                <mat-error>Modell kötelező</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Évjárat *</mat-label>
+                <input matInput type="number" formControlName="year" placeholder="2014">
+                <mat-error>Érvényes évjárat szükséges</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Rendszám</mat-label>
+                <input matInput formControlName="licensePlate" placeholder="ABC-123">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input full">
+                <mat-label>Alvázszám (VIN)</mat-label>
+                <input matInput formControlName="vin" placeholder="17 karakteres kód">
+                <mat-hint>Opcionális</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input full">
+                <mat-label>Jelenlegi km óra állás</mat-label>
+                <input matInput type="number" formControlName="currentMileage">
+                <span matSuffix style="color:var(--text-muted);padding-right:8px">km</span>
+            </mat-form-field>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" style="padding:16px 24px;border-top:1px solid var(--border);gap:8px">
+    <button class="btn-ghost" (click)="onCancel()">Mégse</button>
+    <button class="btn-primary" (click)="onSubmit()" [disabled]="loading || carForm.invalid">
+        <mat-spinner diameter="16" *ngIf="loading" style="display:inline-block;margin-right:6px"></mat-spinner>
+        {{ loading ? 'Mentés...' : 'Autó hozzáadása' }}
+    </button>
+</mat-dialog-actions>

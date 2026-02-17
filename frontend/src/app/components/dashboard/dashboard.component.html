@@ -1,0 +1,121 @@
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon"><mat-icon>directions_car</mat-icon></div>
+            <div class="logo-text">Szervíz<span>könyv</span></div>
+        </div>
+
+        <div class="sidebar-user">
+            <div class="user-badge">
+                <div class="user-avatar">{{ userName.charAt(0).toUpperCase() }}</div>
+                <span class="user-name">{{ userName }}</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Menü</div>
+            <button class="nav-item active">
+                <mat-icon>directions_car</mat-icon> Autóim
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button class="logout-btn" (click)="logout()">
+                <mat-icon>logout</mat-icon> Kijelentkezés
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Autóim</h1>
+                <p>{{ cars.length }} regisztrált jármű</p>
+            </div>
+            <button class="btn-primary" (click)="openAddCarDialog()">
+                <mat-icon>add</mat-icon> Új autó hozzáadása
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row" *ngIf="cars.length > 0">
+            <div class="stat-card">
+                <div class="stat-icon blue"><mat-icon>directions_car</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ cars.length }}</div>
+                    <div class="stat-label">Regisztrált autó</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><mat-icon>build</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ totalServiceRecords }}</div>
+                    <div class="stat-label">Összes szervíz</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><mat-icon>speed</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ maxMileage | number }}</div>
+                    <div class="stat-label">Max km óra állás</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-wrap" *ngIf="loading">
+            <mat-spinner diameter="36"></mat-spinner>
+            <span>Betöltés...</span>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" *ngIf="!loading && cars.length === 0">
+            <div class="empty-icon"><mat-icon>directions_car</mat-icon></div>
+            <h3>Még nincs autód</h3>
+            <p>Add hozzá az első járművedet a szervíztörténet nyomon követéséhez</p>
+            <button class="btn-primary" (click)="openAddCarDialog()">
+                <mat-icon>add</mat-icon> Első autó hozzáadása
+            </button>
+        </div>
+
+        <!-- Cars grid -->
+        <div class="car-grid" *ngIf="!loading && cars.length > 0">
+            <div class="car-card" *ngFor="let car of cars" (click)="openCarDetails(car)">
+                <div class="car-card-header">
+                    <div>
+                        <div class="car-icon-wrap"><mat-icon>directions_car</mat-icon></div>
+                        <div class="car-card-title">{{ car.brand }} {{ car.model }}</div>
+                        <span class="car-card-year">{{ car.year }}</span>
+                    </div>
+                    <mat-icon class="car-card-arrow">arrow_forward</mat-icon>
+                </div>
+
+                <div class="car-card-body">
+                    <div class="car-info-item" *ngIf="car.licensePlate">
+                        <mat-icon>credit_card</mat-icon>
+                        <span>{{ car.licensePlate }}</span>
+                    </div>
+                    <div class="car-info-item" *ngIf="car.currentMileage">
+                        <mat-icon>speed</mat-icon>
+                        <span><strong>{{ car.currentMileage | number }}</strong> km</span>
+                    </div>
+                    <div class="car-info-item">
+                        <mat-icon>build</mat-icon>
+                        <span class="service-badge">{{ car.serviceRecordCount }} szervíz</span>
+                    </div>
+                </div>
+
+                <div class="car-card-footer">
+                    <button class="btn-ghost" (click)="openCarDetails(car); $event.stopPropagation()">
+                        <mat-icon>info</mat-icon> Részletek
+                    </button>
+                    <button class="btn-danger" (click)="deleteCar(car, $event)">
+                        <mat-icon>delete</mat-icon> Törlés
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

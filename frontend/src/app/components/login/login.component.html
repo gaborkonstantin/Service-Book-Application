@@ -1,0 +1,61 @@
+<div class="auth-page">
+    <div class="auth-left">
+        <div class="auth-branding">
+            <div class="brand-icon"><mat-icon>directions_car</mat-icon></div>
+            <h1>Szervízkönyv</h1>
+            <p>Tartsd számon autóid teljes szervíztörténetét egy helyen</p>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <mat-icon>check_circle</mat-icon> Szervíztörténet nyomon követése
+                </div>
+                <div class="feature-item">
+                    <mat-icon>check_circle</mat-icon> Több autó kezelése
+                </div>
+                <div class="feature-item">
+                    <mat-icon>check_circle</mat-icon> Km óra állás rögzítése
+                </div>
+                <div class="feature-item">
+                    <mat-icon>check_circle</mat-icon> Költségek nyilvántartása
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-right">
+        <div class="auth-form-wrap">
+            <h2>Bejelentkezés</h2>
+            <p class="auth-sub">Üdv vissza! Add meg az adataidat</p>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <mat-form-field class="full-width dark-input" appearance="fill">
+                    <mat-label>Email cím</mat-label>
+                    <input matInput type="email" formControlName="email">
+                    <mat-icon matPrefix style="color:var(--text-dim);margin-right:8px">email</mat-icon>
+                    <mat-error>Érvényes email szükséges</mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width dark-input" appearance="fill" style="margin-top:12px">
+                    <mat-label>Jelszó</mat-label>
+                    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+                    <mat-icon matPrefix style="color:var(--text-dim);margin-right:8px">lock</mat-icon>
+                    <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" style="color:var(--text-dim)">
+                        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                    <mat-error>Jelszó kötelező</mat-error>
+                </mat-form-field>
+
+                <button class="btn-primary full-width" type="submit"
+                        [disabled]="loading || loginForm.invalid" style="margin-top:24px;justify-content:center;padding:14px">
+                    <mat-spinner diameter="18" *ngIf="loading" style="display:inline-block;margin-right:8px"></mat-spinner>
+                    {{ loading ? 'Bejelentkezés...' : 'Bejelentkezés' }}
+                </button>
+            </form>
+
+            <p style="text-align:center;margin-top:20px;color:var(--text-muted);font-size:14px">
+                Nincs még fiókod?
+                <a routerLink="/register" style="color:var(--primary);text-decoration:none;font-weight:600">Regisztrálj!</a>
+            </p>
+        </div>
+    </div>
+</div>

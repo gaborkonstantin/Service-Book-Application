@@ -1,0 +1,132 @@
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon"><mat-icon>directions_car</mat-icon></div>
+            <div class="logo-text">Szervíz<span>könyv</span></div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Navigáció</div>
+            <button class="nav-item" (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon> Vissza
+            </button>
+            <button class="nav-item active">
+                <mat-icon>build</mat-icon> Szervíztörténet
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content" *ngIf="car">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>{{ car.brand }} {{ car.model }}</h1>
+                <p>{{ car.year }} · {{ serviceRecords.length }} szervízbejegyzés</p>
+            </div>
+            <button class="btn-primary" (click)="openAddServiceDialog()">
+                <mat-icon>add</mat-icon> Szervíz hozzáadása
+            </button>
+        </div>
+
+        <!-- Car info cards -->
+        <div class="stats-row" style="margin-bottom:32px">
+            <div class="stat-card" *ngIf="car.licensePlate">
+                <div class="stat-icon blue"><mat-icon>credit_card</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value" style="font-family:'DM Mono',monospace;font-size:18px">{{ car.licensePlate }}</div>
+                    <div class="stat-label">Rendszám</div>
+                </div>
+            </div>
+            <div class="stat-card" *ngIf="car.currentMileage">
+                <div class="stat-icon orange"><mat-icon>speed</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ car.currentMileage | number }}</div>
+                    <div class="stat-label">Km óra állás</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><mat-icon>build</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ serviceRecords.length }}</div>
+                    <div class="stat-label">Szervízbejegyzés</div>
+                </div>
+            </div>
+            <div class="stat-card" *ngIf="car.vin">
+                <div class="stat-icon blue" style="width:auto;padding:0 8px"><mat-icon>tag</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value" style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:1px">{{ car.vin }}</div>
+                    <div class="stat-label">Alvázszám</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service records -->
+        <div style="margin-bottom:16px">
+            <h2 style="font-size:18px;font-weight:700;color:var(--text)">Szervíztörténet</h2>
+        </div>
+
+        <div class="loading-wrap" *ngIf="loading">
+            <mat-spinner diameter="36"></mat-spinner>
+        </div>
+
+        <div class="empty-state" *ngIf="!loading && serviceRecords.length === 0">
+            <div class="empty-icon"><mat-icon>build</mat-icon></div>
+            <h3>Még nincs szervízbejegyzés</h3>
+            <p>Rögzítsd az első szervizalkalmat</p>
+            <button class="btn-primary" (click)="openAddServiceDialog()">
+                <mat-icon>add</mat-icon> Bejegyzés hozzáadása
+            </button>
+        </div>
+
+        <mat-accordion *ngIf="!loading && serviceRecords.length > 0" [multi]="false">
+            <mat-expansion-panel *ngFor="let record of serviceRecords">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-icon style="margin-right:10px;color:var(--primary);font-size:18px;width:18px;height:18px">build_circle</mat-icon>
+                        {{ record.serviceType }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        {{ record.serviceDate | date:'yyyy. MMM. d.' }}
+                        <span *ngIf="record.mileage" style="margin-left:16px;color:var(--text-muted)">
+              {{ record.mileage | number }} km
+            </span>
+                        <span *ngIf="record.cost" style="margin-left:16px;color:var(--accent)">
+              {{ record.cost | number }} Ft
+            </span>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div style="padding:8px 0 16px;display:flex;flex-direction:column;gap:10px">
+                    <div *ngIf="record.description" style="color:var(--text-muted);font-size:14px;line-height:1.6">
+                        {{ record.description }}
+                    </div>
+                    <div *ngIf="record.serviceProvider" style="display:flex;align-items:center;gap:6px;font-size:14px">
+                        <mat-icon style="font-size:16px;width:16px;height:16px;color:var(--text-dim)">location_on</mat-icon>
+                        <span>{{ record.serviceProvider }}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim)">
+                        <mat-icon style="font-size:14px;width:14px;height:14px">schedule</mat-icon>
+                        Rögzítve: {{ record.createdAt | date:'yyyy.MM.dd HH:mm' }}
+                    </div>
+
+                    <div *ngIf="record.images && record.images.length > 0" style="margin-top:8px">
+                        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">KÉPEK</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px">
+                            <img *ngFor="let img of record.images" [src]="img.imageUrl"
+                                 style="width:80px;height:80px;object-fit:cover;border-radius:8px;cursor:pointer;border:1px solid var(--border)"
+                                 (click)="openImage(img.imageUrl)">
+                        </div>
+                    </div>
+
+                    <div style="margin-top:8px;padding-top:12px;border-top:1px solid var(--border)">
+                        <button class="btn-danger" (click)="deleteRecord(record)">
+                            <mat-icon>delete</mat-icon> Törlés
+                        </button>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </main>
+</div>

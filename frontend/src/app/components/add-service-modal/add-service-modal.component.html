@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>
+    <mat-icon style="vertical-align:middle;margin-right:8px;color:var(--primary)">build</mat-icon>
+    Szervízbejegyzés hozzáadása
+</h2>
+
+<mat-dialog-content style="padding-top:20px">
+    <form [formGroup]="serviceForm">
+        <div class="form-grid">
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Dátum *</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="serviceDate">
+                <mat-datepicker-toggle matSuffix [for]="picker" style="color:var(--text-muted)"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>Dátum kötelező</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Szerviz típusa *</mat-label>
+                <mat-select formControlName="serviceType">
+                    <mat-option *ngFor="let type of serviceTypes" [value]="type">{{ type }}</mat-option>
+                </mat-select>
+                <mat-error>Típus kötelező</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Km óra állás</mat-label>
+                <input matInput type="number" formControlName="mileage">
+                <span matSuffix style="color:var(--text-muted);padding-right:8px">km</span>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input">
+                <mat-label>Költség</mat-label>
+                <input matInput type="number" formControlName="cost">
+                <span matSuffix style="color:var(--text-muted);padding-right:8px">Ft</span>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input full">
+                <mat-label>Szerviz neve / helye</mat-label>
+                <input matInput formControlName="serviceProvider" placeholder="pl. Honda Szerviz Budapest">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="dark-input full">
+                <mat-label>Megjegyzés / Leírás</mat-label>
+                <textarea matInput formControlName="description" rows="3"
+                          placeholder="Elvégzett munkák részletezése..."></textarea>
+            </mat-form-field>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" style="padding:16px 24px;border-top:1px solid var(--border);gap:8px">
+    <button class="btn-ghost" (click)="onCancel()">Mégse</button>
+    <button class="btn-primary" (click)="onSubmit()" [disabled]="loading || serviceForm.invalid">
+        <mat-spinner diameter="16" *ngIf="loading" style="display:inline-block;margin-right:6px"></mat-spinner>
+        {{ loading ? 'Mentés...' : 'Bejegyzés hozzáadása' }}
+    </button>
+</mat-dialog-actions>

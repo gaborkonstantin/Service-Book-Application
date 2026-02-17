@@ -1,80 +1,170 @@
-# Szervízkönyv Alkalmazás
+# 🚗 Service Book Application
 
-## Projekt struktúra
+A full-stack web application for tracking vehicle service history. Users can register, add their cars, and record detailed service entries including date, mileage, cost, and service provider.
+
+---
+
+## 📸 Features
+
+- 🔐 **JWT-based authentication** – Secure register & login
+- 🚘 **Vehicle management** – Add, view and delete cars
+- 🔧 **Service history** – Record and track all service entries per vehicle
+- 📊 **Dashboard** – Overview of all vehicles with stats
+- 🌙 **Modern dark UI** – Built with Angular Material
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
+| Technology | Version | Purpose |
+|---|---|---|
+| Java | 17 | Core language |
+| Spring Boot | 3.2 | Application framework |
+| Spring Security | 6.x | Authentication & authorization |
+| JWT (jjwt) | 0.12.3 | Token-based auth |
+| Spring Data JPA | 3.2 | Database ORM |
+| Hibernate | 6.x | JPA implementation |
+| H2 Database | - | In-memory database |
+| Lombok | 1.18.30 | Boilerplate reduction |
+| Maven | 3.8+ | Build tool |
+
+### Frontend
+| Technology | Version | Purpose |
+|---|---|---|
+| Angular | 17 | Frontend framework |
+| TypeScript | 5.2 | Core language |
+| Angular Material | 17 | UI component library |
+| RxJS | 7.8 | Reactive programming |
+| SCSS | - | Styling |
+
+---
+
+## 🏗️ Project Structure
+
 ```
-service-book-complete/
-  backend/    ← Spring Boot + H2 adatbázis
-  frontend/   ← Angular 17 + Material UI
+service-book/
+├── backend/
+│   └── src/main/java/com/servicebook/
+│       ├── config/          # Security configuration
+│       ├── controller/      # REST endpoints
+│       ├── dto/             # Data Transfer Objects
+│       ├── model/           # JPA entities
+│       ├── repository/      # Data access layer
+│       ├── security/        # JWT filter, UserDetails
+│       └── service/         # Business logic
+│
+└── frontend/
+    └── src/app/
+        ├── components/      # UI components
+        ├── guards/          # Route guards
+        ├── interceptors/    # HTTP interceptors
+        ├── models/          # TypeScript interfaces
+        └── services/        # API services
 ```
 
 ---
 
-## BACKEND INDÍTÁSA (IntelliJ)
+## 🚀 Getting Started
 
-1. **Nyisd meg IntelliJ-ben:**
-   - File → Open → `backend` mappa
+### Prerequisites
+- Java 17+
+- Node.js 18+
+- npm 9+
 
-2. **Build és run:**
-   - Maven panel → Lifecycle → `clean` majd `package -DskipTests`
-   - Vagy: Run → `ServiceBookApplication`
+### Backend
 
-3. **Backend elérhető:** http://localhost:8080
-4. **H2 Console:** http://localhost:8080/h2-console
-   - JDBC URL: `jdbc:h2:mem:servicebook_db`
-   - Username: `sa` | Password: (üres)
+```bash
+cd backend
+./mvnw spring-boot:run
+```
 
----
+Backend starts at: `http://localhost:8080`
 
-## FRONTEND INDÍTÁSA
+H2 Console: `http://localhost:8080/h2-console`
+```
+JDBC URL:  jdbc:h2:mem:servicebook_db
+Username:  sa
+Password:  (empty)
+```
 
-1. **Nyisd meg terminálban a frontend mappát:**
+### Frontend
+
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
-2. **Frontend elérhető:** http://localhost:4200
+Frontend starts at: `http://localhost:4200`
 
 ---
 
-## HASZNÁLAT
+## 📡 API Endpoints
 
-1. Nyisd meg: http://localhost:4200
-2. **Regisztrálj** új fiókkal (Register gomb)
-3. **Dashboard** - itt látod az autóidat
-4. **+ Új autó** gombbal add hozzá a Honda Civiced
-5. Az autóra kattintva látod a **szervíztörténetet**
-6. **+ Szervíz hozzáadása** gombbal rögzíts bejegyzést
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/register` | Register new user |
+| `POST` | `/api/auth/login` | Login & receive JWT token |
+
+### Cars
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/cars` | Get all cars for current user |
+| `POST` | `/api/cars` | Add new car |
+| `GET` | `/api/cars/{id}` | Get car by ID |
+| `PUT` | `/api/cars/{id}` | Update car |
+| `DELETE` | `/api/cars/{id}` | Delete car |
+
+### Service Records
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/cars/{id}/records` | Get all service records for a car |
+| `POST` | `/api/cars/{id}/records` | Add new service record |
+| `DELETE` | `/api/cars/{id}/records/{rid}` | Delete service record |
+
+> All endpoints except `/api/auth/**` require a valid JWT token in the `Authorization: Bearer <token>` header.
 
 ---
 
-## TECHNOLÓGIÁK
+## 🔒 Authentication Flow
 
-**Backend:**
-- Java 17 + Spring Boot 3.2
-- Spring Security + JWT autentikáció
-- H2 in-memory adatbázis
-- Lombok
-
-**Frontend:**
-- Angular 17
-- Angular Material UI
-- TypeScript
-- RxJS
+```
+1. User registers / logs in  →  POST /api/auth/register or /login
+2. Server returns JWT token
+3. Frontend stores token in localStorage
+4. HTTP Interceptor attaches token to every request
+5. JwtAuthenticationFilter validates token on each request
+```
 
 ---
 
-## API VÉGPONTOK
+## 🗄️ Data Model
 
-| Metódus | Endpoint | Leírás |
-|---------|----------|--------|
-| POST | /api/auth/register | Regisztráció |
-| POST | /api/auth/login | Bejelentkezés |
-| GET | /api/cars | Saját autók listája |
-| POST | /api/cars | Új autó hozzáadása |
-| GET | /api/cars/{id} | Autó részletei |
-| DELETE | /api/cars/{id} | Autó törlése |
-| GET | /api/cars/{id}/records | Szervízbejegyzések |
-| POST | /api/cars/{id}/records | Új bejegyzés |
-| DELETE | /api/cars/{id}/records/{rid} | Bejegyzés törlése |
+```
+User
+ └── Car (1:N)
+      └── ServiceRecord (1:N)
+           └── ServiceImage (1:N)
+```
+
+---
+
+## ⚙️ Configuration
+
+Key settings in `backend/src/main/resources/application.properties`:
+
+```properties
+server.port=8080
+spring.datasource.url=jdbc:h2:mem:servicebook_db
+jwt.secret=your_secret_key
+jwt.expiration=86400000
+spring.web.cors.allowed-origins=http://localhost:4200
+```
+
+---
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
